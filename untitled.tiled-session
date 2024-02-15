@@ -1,0 +1,95 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "assets/tiles/map.tmx",
+    "expandedProjectPaths": [
+        "assets",
+        ".",
+        "assets/tiles"
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 2.7308
+        },
+        "/Users/proc/Documents/Adam_16x16.tsx": {
+            "scaleInDock": 1
+        },
+        "assets/tiles/map.tmx": {
+            "scale": 2.1313,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 173.13376812274197,
+                "y": 136.77098484493035
+            }
+        },
+        "assets/tiles/map.tmx#Adam_16x16": {
+            "scaleInEditor": 6.49
+        },
+        "assets/tiles/map.tmx#Alex_16x16": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2.1449,
+            "scaleInEditor": 1.18
+        },
+        "assets/tiles/map.tmx#Alex_idle_16x1612": {
+            "scaleInDock": 6.0824
+        },
+        "assets/tiles/map.tmx#Amelia": {
+            "scaleInDock": 2.7308,
+            "scaleInEditor": 1.63
+        },
+        "assets/tiles/map.tmx#Amelia_16x16": {
+            "scaleInDock": 1.5362
+        },
+        "assets/tiles/map.tmx#Bob_16x16": {
+            "scaleInDock": 1.9669,
+            "scaleInEditor": 1
+        },
+        "assets/tiles/map.tmx#Interiors_free_16x16": {
+            "scaleInDock": 1.8086,
+            "scaleInEditor": 1
+        },
+        "assets/tiles/map.tmx#Interiors_free_32x32": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "assets/tiles/map.tmx#Room_Builder_free_16x16": {
+            "scaleInDock": 2.0522,
+            "scaleInEditor": 1
+        },
+        "assets/tiles/map.tmx#Room_Builder_free_32x32": {
+            "scaleInDock": 1
+        },
+        "assets/tiles/map.tmx#alpha": {
+            "scaleInDock": 2.4428,
+            "scaleInEditor": 3.36
+        },
+        "assets/tiles/map.tmx#interiors": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        },
+        "assets/tiles/map.tmx#room_builder": {
+            "scaleInEditor": 1.04
+        }
+    },
+    "last.externalTilesetPath": "/Users/proc/Developer/raog_tver_meta/assets/images",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "1",
+    "openFiles": [
+        "assets/tiles/map.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "assets/tiles/map.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFilter": "All Files (*)",
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.useTransparentColor": true
+}
