@@ -20,6 +20,8 @@ class _MissionNotificationState extends State<MissionNotification>
 
   Missions? _lastCompletedMission;
 
+  bool _finished = false;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -36,11 +38,19 @@ class _MissionNotificationState extends State<MissionNotification>
       final newMissionCompleted =
           _lastCompletedMission != widget.controller.lastCompletedMission;
       if (newMissionCompleted) {
+        _lastCompletedMission = widget.controller.lastCompletedMission;
         animationController.forward().whenComplete(() {
           Future.delayed(const Duration(seconds: 2)).whenComplete(
             () => animationController.reverse(),
           );
         });
+      }
+      if (widget.controller.allMissionsCompleted) {
+        setState(() {
+          _finished = true;
+        });
+        Future.delayed(const Duration(seconds: 5))
+            .then((value) => setState(() => _finished = false));
       }
     });
     super.initState();
@@ -63,6 +73,28 @@ class _MissionNotificationState extends State<MissionNotification>
                 child: _buildNotification(),
               );
             }),
+        Center(
+          child: AnimatedOpacity(
+            opacity: _finished ? 1 : 0,
+            duration: const Duration(milliseconds: 500),
+            child: Material(
+              borderRadius: BorderRadius.circular(13),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('ПОЗДРАВЛЯЕМ!', style: Styles.missionCompleteStyle),
+                    const Text(
+                      'Ты выполнил все миссии. Ждем тебя на Альфе',
+                      style: Styles.missionsHeaderStyle,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

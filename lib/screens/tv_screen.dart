@@ -48,7 +48,12 @@ class _TvScreenState extends State<TvScreen> {
               _controller.pause();
               widget.game.overlays.remove('tv');
               widget.game.bgm.resume();
-              widget.game.missionsController.complete(Missions.watchTV);
+              _controller.position.then((position) {
+                if (position != null &&
+                    position > const Duration(seconds: 30)) {
+                  widget.game.missionsController.complete(Missions.watchTV);
+                }
+              });
             },
             child: const Text('Закрыть'),
           ),

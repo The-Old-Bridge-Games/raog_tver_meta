@@ -89,7 +89,7 @@ class DrinkEvent extends PositionComponent
   @override
   FutureOr<void> onLoad() async {
     _drinkPool = await FlameAudio.createPool('DRINK.mp3', maxPlayers: 1);
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
     return super.onLoad();
   }
 
@@ -228,7 +228,7 @@ class ChairEvent extends PositionComponent
 
   @override
   FutureOr<void> onLoad() async {
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
     return super.onLoad();
   }
 
@@ -296,7 +296,7 @@ class CouchEvent extends PositionComponent
 
   @override
   FutureOr<void> onLoad() async {
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
     return super.onLoad();
   }
 
@@ -424,7 +424,7 @@ class EventComponent extends PositionComponent
       ..anchor = Anchor.center;
     _inProgressComponent = TextBoxComponent();
     _finishedComponent = TextBoxComponent();
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
     return super.onLoad();
   }
 

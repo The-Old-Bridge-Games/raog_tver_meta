@@ -11,7 +11,7 @@ import 'package:raog_tver_meta/obstacle.dart';
 class Player extends SpriteAnimationGroupComponent<MyStates>
     with CollisionCallbacks, HasGameRef<RaogTverMeta> {
   Player() : super(anchor: Anchor.bottomCenter) {
-    debugMode = true;
+    debugMode = false;
   }
 
   AudioPlayer? _walkingPlayer;
@@ -88,76 +88,93 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
   @override
   FutureOr<void> onLoad() async {
     const stepTime = 0.2;
-    final spriteSheet = SpriteSheet.fromColumnsAndRows(
-      image: await Flame.images.load('Adam_16x16.png'),
-      columns: 24,
-      rows: 7,
-    );
-    final idleRightAnimation = spriteSheet.createAnimation(
-      row: 1,
+    final idleRightAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Idle Right.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      to: 5,
     );
-    final idleDownAnimation = SpriteAnimation.fromFrameData(
-      await Flame.images.load('Adam_16x16.png'),
-      SpriteAnimationData.sequenced(
-          amount: 6,
-          stepTime: stepTime,
-          textureSize: Vector2(16, 32),
-          texturePosition: Vector2(18 * 16, 32)),
+    final idleDownAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Idle Down.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
+      stepTime: stepTime,
     );
-    final idleLeftAnimation = spriteSheet.createAnimation(
-      row: 1,
+    final idleLeftAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Idle Left.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      from: 12,
-      to: 17,
     );
-    final idleUpAnimation = spriteSheet.createAnimation(
-      row: 1,
+    final idleUpAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Idle Up.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      from: 6,
-      to: 11,
     );
-    final moveRightAnimation = spriteSheet.createAnimation(
-      row: 2,
+    final moveRightAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Move Right.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      to: 5,
     );
-    final moveDownAnimation = spriteSheet.createAnimation(
-      row: 2,
+    final moveDownAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Move Down.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      from: 18,
-    )..frames.forEach((element) {
-        element.sprite.srcSize = element.sprite.srcSize - Vector2.all(2);
-      });
-    final moveLeftAnimation = spriteSheet.createAnimation(
-      row: 2,
-      stepTime: stepTime,
-      from: 12,
-      to: 17,
     );
-    final moveUpAnimation = spriteSheet.createAnimation(
-      row: 2,
+    final moveLeftAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Move Left.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      from: 6,
-      to: 11,
     );
-    final sitRightAnimation = spriteSheet.createAnimation(
-      row: 5,
+    final moveUpAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Move Up.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      to: 5,
-      loop: false,
     );
-    final sitLeftAnimation = spriteSheet.createAnimation(
-      row: 5,
+    final sitRightAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Sit Right.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      from: 6,
-      to: 12,
     );
-    final drinkAnimation = spriteSheet.createAnimation(
-      row: 6,
+    final sitLeftAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Sit Left.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
       stepTime: stepTime,
-      to: 8,
+    );
+    final drinkAnimation = SpriteSheet(
+      image: await Flame.images.load('player/Drink.png'),
+      srcSize: Vector2(16, 32),
+      spacing: 16,
+    ).createAnimation(
+      row: 0,
+      stepTime: stepTime,
     );
 
     animations = {

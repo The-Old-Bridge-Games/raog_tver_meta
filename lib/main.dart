@@ -7,6 +7,8 @@ import 'package:flame/game.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:raog_tver_meta/events/dialog_event.dart';
 import 'package:raog_tver_meta/events/event.dart';
 import 'package:raog_tver_meta/missions/mission.dart';
@@ -18,11 +20,29 @@ import 'package:raog_tver_meta/screens/gallery_screen.dart';
 import 'package:raog_tver_meta/missions/missions_container.dart';
 import 'package:raog_tver_meta/screens/tv_screen.dart';
 
+// 1. add photos
+// 2. fix player sprite ✅
+// 3. add progress storing
+// 4. add app icon
+// 5. deploy
+// 6. write a post
+
 void main() {
-  // final videoPlayerController =
-  //     YoutubePlayerController(initialVideoId: 'X_Pu5POlc4E');
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   final missionsController = MissionsController(Map.fromEntries(
     Missions.values.map((e) => MapEntry(e, false)),
+    // Missions.values.map((e) {
+    //   if (Missions.values.indexOf(e) == 2) {
+    //     return MapEntry(e, false);
+    //   } else {
+    //     return MapEntry(e, true);
+    //   }
+    // }),
   ));
   material.runApp(material.MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -70,21 +90,39 @@ class RaogTverMeta extends FlameGame with HasCollisionDetection {
 
   bool get dialogProceeding => _dialogProceeding;
 
+  bool _joystickHidden = false;
+
+  void hideJoystick() {
+    if (!_joystickHidden) {
+      _joystickHidden = true;
+      joystick.position.add(Vector2(-1000, -1000));
+    }
+  }
+
+  showJoystick() {
+    if (_joystickHidden) {
+      _joystickHidden = false;
+      joystick.position.add(Vector2(1000, 1000));
+    }
+  }
+
   void proceedDialog(DialogEvent dialog) {
     if (_dialogProceeding) return;
     _dialogProceeding = true;
+    hideJoystick();
     dialog.run(onComplete: () {
       _dialogProceeding = false;
+      showJoystick();
       missionsController.complete(Missions.talkToEverybody);
     }, onStopped: () {
       _dialogProceeding = false;
+      showJoystick();
     });
   }
 
   @override
   FutureOr<void> onLoad() async {
-    // bgm = await FlameAudio.loopLongAudio('SUCHI PEGA.mp3', volume: 0.3);
-    //
+    bgm = await FlameAudio.loopLongAudio('SUCHI PEGA.mp3', volume: 0.3);
     const jBackgroundRadius = 20.0;
     const jKnobRadius = 7.0;
     const jPadding = 16.0;

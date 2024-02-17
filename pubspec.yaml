@@ -60,6 +60,9 @@ flutter:
     - assets/images/
     - assets/images/2.0x/
     - assets/images/3.0x/
+    - assets/images/player/
+    - assets/images/player/2.0x/
+    - assets/images/player/3.0x/
     - assets/tiles/
     - assets/images/gallery/
 

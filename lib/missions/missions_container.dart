@@ -21,7 +21,11 @@ class _MissionsContainerState extends State<MissionsContainer> {
 
   @override
   void initState() {
-    widget.controller.addListener(() => setState(() {}));
+    widget.controller.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
@@ -97,6 +101,9 @@ class _MissionsContainerState extends State<MissionsContainer> {
   }
 
   Widget _buildCollapsed() {
+    final headerStyle = widget.controller.allMissionsCompleted
+        ? Styles.missionsHeaderStyle.copyWith(color: Styles.greenColor)
+        : Styles.missionsHeaderStyle;
     return GestureDetector(
       onTap: () {
         setState(_expandController.toggle);
@@ -110,11 +117,11 @@ class _MissionsContainerState extends State<MissionsContainer> {
           child: Row(
             children: [
               const Spacer(),
-              const Text('Задания', style: Styles.missionsHeaderStyle),
+              Text('Задания', style: headerStyle),
               const SizedBox(width: 4),
               Text(
                 '${widget.controller.completedMissionsAmount}/${widget.controller.missionsAmount}',
-                style: Styles.missionsHeaderStyle,
+                style: headerStyle,
               ),
               const Spacer(),
             ],
