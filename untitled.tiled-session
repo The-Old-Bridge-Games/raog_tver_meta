@@ -17,11 +17,11 @@
             "scaleInDock": 1
         },
         "assets/tiles/map.tmx": {
-            "scale": 2.1313,
+            "scale": 4.8431,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 173.13376812274197,
-                "y": 136.77098484493035
+                "x": 75.98439016332514,
+                "y": 63.905349879209595
             }
         },
         "assets/tiles/map.tmx#Adam_16x16": {

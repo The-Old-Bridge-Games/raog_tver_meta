@@ -11,15 +11,14 @@ import 'package:raog_tver_meta/obstacle.dart';
 class Player extends SpriteAnimationGroupComponent<MyStates>
     with CollisionCallbacks, HasGameRef<RaogTverMeta> {
   Player() : super(anchor: Anchor.bottomCenter) {
-    debugMode = false;
+    debugMode = true;
   }
 
   AudioPlayer? _walkingPlayer;
 
   double maxSpeed = 5.0;
 
-  var collisionDirection = CollisionDirection.none;
-  List<CollisionDirection> possibleCollisionDirections = [];
+  var collisionDirection = JoystickDirection.idle;
 
   JoystickComponent get joystick => game.joystick;
 
@@ -47,34 +46,10 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
 
       if (!isWalking(current) && isWalking(newState)) {
         playWalking();
-        print('playWalking');
       } else if (isWalking(current) && !isWalking(newState)) {
         _walkingPlayer?.stop();
       }
       current = newState;
-    }
-  }
-
-  List<CollisionDirection> get collisionDirections {
-    switch (joystick.direction) {
-      case JoystickDirection.idle:
-        return [];
-      case JoystickDirection.down:
-        return [CollisionDirection.down];
-      case JoystickDirection.downLeft:
-        return [CollisionDirection.down, CollisionDirection.left];
-      case JoystickDirection.downRight:
-        return [CollisionDirection.down, CollisionDirection.right];
-      case JoystickDirection.left:
-        return [CollisionDirection.left];
-      case JoystickDirection.upLeft:
-        return [CollisionDirection.up, CollisionDirection.left];
-      case JoystickDirection.up:
-        return [CollisionDirection.up];
-      case JoystickDirection.upRight:
-        return [CollisionDirection.up, CollisionDirection.right];
-      case JoystickDirection.right:
-        return [CollisionDirection.right];
     }
   }
 
@@ -97,18 +72,16 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Obstacle) {
-      for (final dir in collisionDirections) {
-        if (!possibleCollisionDirections.contains(dir)) {
-          possibleCollisionDirections.add(dir);
-        }
-      }
+      collisionDirection = joystick.direction;
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    possibleCollisionDirections = [];
+    if (other is Obstacle) {
+      collisionDirection = JoystickDirection.idle;
+    }
     super.onCollisionEnd(other);
   }
 
@@ -204,7 +177,8 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
     add(RectangleHitbox(
       anchor: Anchor.bottomCenter,
       position: Vector2(size.x / 2, size.y),
-      size: Vector2(size.x, size.y / 2),
+      size: Vector2(size.x, 8),
+      isSolid: true,
     ));
     return super.onLoad();
   }
@@ -214,6 +188,7 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
     super.update(dt);
     final prevState = current;
     MyStates? newState;
+    Vector2 delta = joystick.delta;
     switch (joystick.direction) {
       case JoystickDirection.idle:
         if (current == MyStates.moveDown) {
@@ -231,17 +206,25 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
         if (current != MyStates.moveDown) {
           newState = MyStates.moveDown;
         }
+        if (joystick.direction == JoystickDirection.up) {
+          delta.x = 0;
+        }
       case JoystickDirection.left:
         if (current != MyStates.moveLeft) {
           newState = MyStates.moveLeft;
         }
+        delta.y = 0;
       case JoystickDirection.right:
         if (current != MyStates.moveRight) {
           newState = MyStates.moveRight;
         }
+        delta.y = 0;
       case JoystickDirection.upLeft:
       case JoystickDirection.upRight:
       case JoystickDirection.up:
+        if (joystick.direction == JoystickDirection.up) {
+          delta.x = 0;
+        }
         if (current != MyStates.moveUp) {
           newState = MyStates.moveUp;
         }
@@ -250,42 +233,54 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
       setCurrent(newState);
     }
     if (joystick.direction != JoystickDirection.idle) {
-      Vector2 delta = joystick.delta;
-      if (possibleCollisionDirections.contains(CollisionDirection.up)) {
-        if (delta.y < 0) {
-          delta = Vector2(delta.x, 0);
-        } else {
-          delta = Vector2(delta.x, delta.y);
-        }
+      switch (collisionDirection) {
+        case JoystickDirection.idle:
+          break;
+        case JoystickDirection.down:
+          if (delta.y > 0) {
+            delta.y = 0;
+          }
+        case JoystickDirection.downLeft:
+          if (delta.x < 0) {
+            delta.x = 0;
+          }
+          if (delta.y > 0) {
+            delta.y = 0;
+          }
+        case JoystickDirection.downRight:
+          if (delta.x > 0) {
+            delta.x = 0;
+          }
+          if (delta.y > 0) {
+            delta.y = 0;
+          }
+        case JoystickDirection.left:
+          if (delta.x < 0) {
+            delta.x = 0;
+          }
+        case JoystickDirection.right:
+          if (delta.x > 0) {
+            delta.x = 0;
+          }
+        case JoystickDirection.up:
+          if (delta.y < 0) {
+            delta.y = 0;
+          }
+        case JoystickDirection.upLeft:
+          if (delta.x < 0) {
+            delta.x = 0;
+          }
+          if (delta.y < 0) {
+            delta.y = 0;
+          }
+        case JoystickDirection.upRight:
+          if (delta.x > 0) {
+            delta.x = 0;
+          }
+          if (delta.y < 0) {
+            delta.y = 0;
+          }
       }
-      if (possibleCollisionDirections.contains(CollisionDirection.right)) {
-        if (delta.x > 0) {
-          delta = Vector2(0, delta.y);
-        } else {
-          delta = Vector2(delta.x, delta.y);
-        }
-      }
-      if (possibleCollisionDirections.contains(CollisionDirection.down)) {
-        if (delta.y > 0) {
-          delta = Vector2(delta.x, 0);
-        } else {
-          delta = Vector2(delta.x, delta.y);
-        }
-      }
-      if (possibleCollisionDirections.contains(CollisionDirection.left)) {
-        if (delta.x > 0) {
-          delta = Vector2(delta.x, delta.y);
-        } else {
-          delta = Vector2(0, delta.y);
-        }
-      }
-      // Vector2 delta = switch (collisionDirection) {
-      //   CollisionDirection.none => joystick.delta,
-      //   CollisionDirection.up => Vector2(joystick.delta.x, 0),
-      //   CollisionDirection.down => Vector2(joystick.delta.x, 0),
-      //   CollisionDirection.right => Vector2(0, joystick.delta.y),
-      //   CollisionDirection.left => Vector2(0, joystick.delta.y),
-      // };
       delta = delta * maxSpeed * dt;
       if (position.x + size.x / 2 + delta.x > gameRef.mapSize.x - width / 2) {
         delta.x = 0;
@@ -293,7 +288,7 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
       if (position.x - size.x / 2 + delta.x < width / 2) {
         delta.x = 0;
       }
-      if (position.y + delta.y > gameRef.mapSize.y - height / 2) {
+      if (position.y + delta.y > gameRef.mapSize.y - 5) {
         delta.y = 0;
       }
       if (position.y - height / 3 * 2 + delta.y < height / 2) {

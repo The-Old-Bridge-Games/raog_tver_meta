@@ -233,11 +233,3 @@ enum MyStates {
   sitLeft,
   drink,
 }
-
-enum CollisionDirection {
-  none,
-  left,
-  right,
-  up,
-  down;
-}

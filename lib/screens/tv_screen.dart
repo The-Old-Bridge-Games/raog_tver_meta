@@ -47,7 +47,7 @@ class _TvScreenState extends State<TvScreen> {
               FlameAudio.play('TV OFF.mp3');
               _controller.pause();
               widget.game.overlays.remove('tv');
-              // widget.game.bgm.resume();
+              widget.game.bgm.resume();
               widget.game.missionsController.complete(Missions.watchTV);
             },
             child: const Text('Закрыть'),

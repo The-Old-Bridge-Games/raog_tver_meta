@@ -133,7 +133,7 @@ class DrinkEvent extends PositionComponent
 class TvEvent extends PositionComponent
     with HasGameRef<RaogTverMeta>, CollisionCallbacks, Event {
   TvEvent({super.size, super.position}) {
-    debugMode = true;
+    debugMode = false;
   }
 
   late final AudioPool _talkingPool;
@@ -196,7 +196,7 @@ class TvEvent extends PositionComponent
       onPressed: () {
         FlameAudio.play('TV ON.mp3');
         gameRef.overlays.add('tv');
-        // gameRef.bgm.pause();
+        gameRef.bgm.pause();
       },
       button: TextComponent(
         text: 'Смотреть',
