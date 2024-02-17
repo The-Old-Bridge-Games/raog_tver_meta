@@ -19,13 +19,40 @@ import 'package:raog_tver_meta/player.dart';
 import 'package:raog_tver_meta/screens/gallery_screen.dart';
 import 'package:raog_tver_meta/missions/missions_container.dart';
 import 'package:raog_tver_meta/screens/tv_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// 1. add photos
+// 1. add photos ✅
 // 2. fix player sprite ✅
-// 3. add progress storing
+// 3. add progress storing ✅
 // 4. add app icon
 // 5. deploy
 // 6. write a post
+
+late final SharedPreferences _prefs;
+
+Map<Missions, bool> _parseJson(Map<String, dynamic> json) => {
+      Missions.watchTV: json[Missions.watchTV.name] ?? false,
+      Missions.lookGallery: json[Missions.lookGallery.name] ?? false,
+      Missions.talkToEverybody: json[Missions.talkToEverybody.name] ?? false,
+      Missions.drinkWater: json[Missions.drinkWater.name] ?? false,
+    };
+
+Future<Map<Missions, bool>?> _init() async {
+  final prefs = await SharedPreferences.getInstance();
+  _prefs = prefs;
+  final missions = Map.fromEntries(
+    Missions.values.map(
+      (e) => MapEntry(e, false),
+    ),
+  );
+  for (final mission in Missions.values) {
+    final completed = prefs.getBool(mission.name);
+    if (completed == true) {
+      missions[mission] = true;
+    }
+  }
+  return missions;
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,38 +61,60 @@ void main() {
     DeviceOrientation.landscapeRight,
   ]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  final missionsController = MissionsController(Map.fromEntries(
-    Missions.values.map((e) => MapEntry(e, false)),
-    // Missions.values.map((e) {
-    //   if (Missions.values.indexOf(e) == 2) {
-    //     return MapEntry(e, false);
-    //   } else {
-    //     return MapEntry(e, true);
-    //   }
-    // }),
-  ));
   material.runApp(material.MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: material.LayoutBuilder(builder: (context, constraints) {
-      return material.Stack(
-        children: [
-          GameWidget(
-            game: RaogTverMeta(missionsController: missionsController),
-            overlayBuilderMap: {
-              'gallery': (context, FlameGame game) => GalleryScreen(
-                    game: game,
-                    missionsController: missionsController,
-                  ),
-              'tv': (context, RaogTverMeta game) => TvScreen(game: game),
-              'missions': (context, RaogTverMeta game) => MissionsContainer(
-                    controller: missionsController,
-                  ),
-            },
-          ),
-          MissionNotification(controller: missionsController),
-        ],
-      );
-    }),
+    home: material.FutureBuilder(
+        future: _init(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child:
+                  material.Text(snapshot.error?.toString() ?? 'Error occurred'),
+            );
+          }
+          if (snapshot.hasData) {
+            final missions = snapshot.data ?? {};
+            final missionsController = MissionsController(
+              missions.isEmpty
+                  ? Map.fromEntries(
+                      Missions.values.map((e) => MapEntry(e, false)),
+                      // Missions.values.map((e) {
+                      //   if (Missions.values.indexOf(e) == 2) {
+                      //     return MapEntry(e, false);
+                      //   } else {
+                      //     return MapEntry(e, true);
+                      //   }
+                      // }),
+                    )
+                  : missions,
+              _prefs,
+            );
+            return material.Stack(
+              children: [
+                GameWidget(
+                  game: RaogTverMeta(missionsController: missionsController),
+                  overlayBuilderMap: {
+                    'gallery': (context, FlameGame game) => GalleryScreen(
+                          game: game,
+                          missionsController: missionsController,
+                        ),
+                    'tv': (context, RaogTverMeta game) => TvScreen(game: game),
+                    'missions': (context, RaogTverMeta game) =>
+                        MissionsContainer(
+                          controller: missionsController,
+                        ),
+                  },
+                ),
+                IgnorePointer(
+                    child: MissionNotification(controller: missionsController)),
+              ],
+            );
+          } else {
+            return const Scaffold(
+              body: material.Center(child: CircularProgressIndicator()),
+            );
+          }
+        }),
   ));
 }
 
@@ -245,13 +294,11 @@ class RaogTverMeta extends FlameGame with HasCollisionDetection {
             position: Vector2(event.x, event.y),
             size: Vector2(event.width, event.height),
           ));
-        default:
-          world.add(EventComponent(
-            event: EventType.fromClass(event.class_),
-            properties: event.properties,
+        case 'Gallery':
+          world.add(GalleryEvent(
             position: Vector2(event.x, event.y),
             size: Vector2(event.width, event.height),
-          ));
+          )..debugMode = false);
       }
     }
     return super.onLoad();

@@ -24,9 +24,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
   final _pageController = PageController(viewportFraction: 0.7);
 
   final imagePaths = [
-    'assets/images/gallery/gallery1.jpg',
+    'assets/images/gallery/IMG_3701.heic',
+    'assets/images/gallery/IMG_3697.heic',
+    'assets/images/gallery/IMG_3698.heic',
+    'assets/images/gallery/IMG_3699.heic',
     'assets/images/gallery/gallery2.jpg',
-    'assets/images/gallery/gallery3.jpg',
+    'assets/images/gallery/IMG_2609.heic',
+    'assets/images/gallery/IMG_3042.heic',
+    'assets/images/gallery/IMG_3082.heic',
+    'assets/images/gallery/IMG_3084.heic',
+    'assets/images/gallery/IMG_6929.heic',
   ];
 
   @override
@@ -45,7 +52,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 controller: _pageController,
                 onPageChanged: (page) {
                   FlameAudio.play('SLIDE.mp3');
-                  if (page == 2) {
+                  if (page == 9) {
                     widget.missionsController.complete(Missions.lookGallery);
                   }
                 },
@@ -63,7 +70,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       width: 10, color: borderColor)),
-                              child: Image.asset(imagePath),
+                              child:
+                                  IgnorePointer(child: Image.asset(imagePath)),
                             ),
                           ),
                         ],
@@ -77,7 +85,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             top: 24,
             child: ElevatedButton(
               onPressed: () => widget.game.overlays.remove('gallery'),
-              child: const Text('Назад'),
+              child: const Text('Выйти'),
             ),
           )
         ],

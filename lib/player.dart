@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:raog_tver_meta/events/event.dart';
 import 'package:raog_tver_meta/main.dart';
 import 'package:raog_tver_meta/obstacle.dart';
 
@@ -314,10 +315,14 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
       if ((prevState == MyStates.sitLeft || prevState == MyStates.sitRight) &&
           current != prevState) {
         if (prevState == MyStates.sitRight) {
-          position.add(-Vector2(15, 0));
+          position.add(-Vector2(25, 0));
         }
         if (prevState == MyStates.sitLeft) {
-          position.add(Vector2(15, 0));
+          if (gameRef.me.activeCollisions.whereType<CouchEvent>().isNotEmpty) {
+            position.add(Vector2(0, -25));
+            return;
+          }
+          position.add(Vector2(25, 0));
         }
       }
       position.add(delta);

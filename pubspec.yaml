@@ -31,6 +31,7 @@ dependencies:
   flame_audio: ^2.1.8
   video_player: ^2.8.2
   expandable: ^5.0.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

@@ -27,6 +27,9 @@ final class DialogEvent extends PositionComponent
     debugMode = false;
   }
 
+  @override
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
+
   bool _running = false;
   bool _completed = false;
 
@@ -86,7 +89,7 @@ final class DialogEvent extends PositionComponent
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Player && canShowButton) {
+    if (other is Player && !hasButton && canShowButton) {
       add(startButton()..position = size / 2);
     }
     super.onCollisionStart(intersectionPoints, other);
@@ -94,7 +97,6 @@ final class DialogEvent extends PositionComponent
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    final hasButton = children.whereType<ButtonComponent>().isNotEmpty;
     if (other is Player && hasButton && !other.sitting) {
       removeWhere((component) => component is ButtonComponent);
     }
@@ -115,10 +117,11 @@ final class DialogEvent extends PositionComponent
       },
       anchor: Anchor.center,
       button: TextComponent(
+        size: size,
         text: 'Говорить',
         textRenderer: TextPaint(
           style: TextStyle(
-            fontSize: 4,
+            fontSize: 5,
             fontWeight: FontWeight.w600,
             background: Paint()
               ..color = Colors.black38
@@ -126,7 +129,7 @@ final class DialogEvent extends PositionComponent
           ),
         ),
       ),
-    );
+    )..debugMode = false;
   }
 
   Future<void> _runTable1Index1(void Function()? onComplete) async {
@@ -454,9 +457,11 @@ final class DialogEvent extends PositionComponent
   }) async {
     final isSitting = gameRef.me.sitting;
     if (!isSitting) {
+      _running = true;
       const text = 'Присаживайся, пообщаемся!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
+      await playTalking();
       addAll([
         DialogTextBoxComponent(
           text: text,
@@ -478,6 +483,7 @@ final class DialogEvent extends PositionComponent
           'Меня зовут Дениз! Вообще-то я пастор церкви, если интересует духовный вопрос.. и не только.. я весь твой!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
+      await playTalking();
       addAll([
         DialogTextBoxComponent(
           text: text,
@@ -503,9 +509,11 @@ final class DialogEvent extends PositionComponent
   }) async {
     final isSitting = gameRef.me.sitting;
     if (!isSitting) {
+      _running = true;
       const text = 'Я могу рассказать тебе кое-что, присаживайся!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
+      await playTalking();
       addAll([
         DialogTextBoxComponent(
           text: text,
@@ -528,6 +536,7 @@ final class DialogEvent extends PositionComponent
           'Меня зовут Натали! Я жена пастора. Если тебе что-то нужно – просто скажи!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
+      await playTalking();
       addAll([
         DialogTextBoxComponent(
           text: text,

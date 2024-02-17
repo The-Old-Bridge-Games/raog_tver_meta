@@ -49,6 +49,8 @@ enum EventState {
 
 mixin Event on PositionComponent {
   PositionComponent startButton();
+
+  bool get hasButton;
 }
 
 class DrinkEvent extends PositionComponent
@@ -62,7 +64,6 @@ class DrinkEvent extends PositionComponent
   });
 
   late final AudioPool _drinkPool;
-  bool showButton = false;
   bool drinking = false;
 
   @override
@@ -70,8 +71,7 @@ class DrinkEvent extends PositionComponent
     Set<Vector2> intersectionPoints,
     PositionComponent other,
   ) {
-    if (other is Player && !showButton) {
-      showButton = true;
+    if (other is Player && !hasButton) {
       add(startButton()..position = size / 2);
     }
     super.onCollisionStart(intersectionPoints, other);
@@ -79,8 +79,7 @@ class DrinkEvent extends PositionComponent
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is Player && showButton) {
-      showButton = false;
+    if (other is Player && hasButton) {
       removeWhere((component) => component is ButtonComponent);
     }
     super.onCollisionEnd(other);
@@ -118,7 +117,7 @@ class DrinkEvent extends PositionComponent
         text: 'Попить',
         textRenderer: TextPaint(
           style: TextStyle(
-            fontSize: 4,
+            fontSize: 5,
             fontWeight: FontWeight.w600,
             background: Paint()
               ..color = Colors.black38
@@ -128,6 +127,9 @@ class DrinkEvent extends PositionComponent
       ),
     );
   }
+
+  @override
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
 }
 
 class TvEvent extends PositionComponent
@@ -138,25 +140,18 @@ class TvEvent extends PositionComponent
 
   late final AudioPool _talkingPool;
 
+  @override
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
+
   bool _talking = false;
-  bool _showButton = false;
-  set showButton(bool show) {
-    if (show == _showButton) return;
-    _showButton = show;
-    if (_showButton) {
-      add(startButton()..position = size / 2);
-    } else {
-      removeWhere((component) => component is ButtonComponent);
-    }
-  }
 
   @override
   void onCollisionStart(
     Set<Vector2> intersectionPoints,
     PositionComponent other,
   ) {
-    if (other is Player && !_showButton) {
-      showButton = true;
+    if (other is Player && !hasButton) {
+      add(startButton()..position = size / 2);
     }
     if (other is Player && !_talking) {
       _talking = true;
@@ -175,7 +170,7 @@ class TvEvent extends PositionComponent
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (_showButton) showButton = false;
+    if (hasButton) removeWhere((component) => component is ButtonComponent);
     super.onCollisionEnd(other);
   }
 
@@ -202,7 +197,7 @@ class TvEvent extends PositionComponent
         text: 'Смотреть',
         textRenderer: TextPaint(
           style: TextStyle(
-            fontSize: 4,
+            fontSize: 5,
             fontWeight: FontWeight.w600,
             background: Paint()
               ..color = Colors.black38
@@ -224,29 +219,34 @@ class ChairEvent extends PositionComponent
     super.size,
   });
 
-  var showButton = false;
+  @override
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
 
   @override
   FutureOr<void> onLoad() async {
     add(RectangleHitbox(isSolid: true));
+    add(TimerComponent(
+        period: 0.5,
+        repeat: true,
+        onTick: () {
+          final inArea = distance(gameRef.me) < 30;
+          if (gameRef.dialogProceeding && hasButton) {
+            removeWhere((component) => component is ButtonComponent);
+          }
+          if (gameRef.me.sitting && hasButton) {
+            removeWhere((component) => component is ButtonComponent);
+          }
+          if (inArea &&
+              !hasButton &&
+              !gameRef.dialogProceeding &&
+              !gameRef.me.sitting) {
+            add(startButton()..position = size / 2);
+          }
+          if (!inArea && hasButton) {
+            removeWhere((component) => component is ButtonComponent);
+          }
+        }));
     return super.onLoad();
-  }
-
-  @override
-  void update(double dt) {
-    final inArea = distance(gameRef.me) < 30;
-    if (gameRef.dialogProceeding) {
-      showButton = false;
-      removeWhere((component) => component is ButtonComponent);
-    }
-    if (gameRef.me.sitting) {
-      showButton = false;
-      removeWhere((component) => component is ButtonComponent);
-    } else if (inArea && !showButton && !gameRef.dialogProceeding) {
-      showButton = true;
-      add(startButton()..position = size / 2);
-    }
-    super.update(dt);
   }
 
   @override
@@ -262,7 +262,7 @@ class ChairEvent extends PositionComponent
         }
         if (newState != null) {
           FlameAudio.play('SEATDOWN.mp3');
-          gameRef.me.current = newState;
+          gameRef.me.setCurrent(newState);
           gameRef.me.position = Vector2(center.x, center.y + size.y / 2);
         }
       },
@@ -270,7 +270,7 @@ class ChairEvent extends PositionComponent
         text: 'Сесть',
         textRenderer: TextPaint(
           style: TextStyle(
-            fontSize: 4,
+            fontSize: 5,
             fontWeight: FontWeight.w600,
             background: Paint()
               ..color = Colors.black38
@@ -278,7 +278,7 @@ class ChairEvent extends PositionComponent
           ),
         ),
       ),
-    );
+    )..debugMode = false;
   }
 }
 
@@ -292,7 +292,8 @@ class CouchEvent extends PositionComponent
     super.size,
   });
 
-  var showButton = false;
+  @override
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
 
   @override
   FutureOr<void> onLoad() async {
@@ -322,7 +323,7 @@ class CouchEvent extends PositionComponent
         text: 'Сесть',
         textRenderer: TextPaint(
           style: TextStyle(
-            fontSize: 4,
+            fontSize: 5,
             fontWeight: FontWeight.w600,
             background: Paint()
               ..color = Colors.black38
@@ -336,134 +337,68 @@ class CouchEvent extends PositionComponent
   @override
   void update(double dt) {
     final inArea = distance(gameRef.me) < 50;
-    if (gameRef.me.sitting) {
-      showButton = false;
+    if (gameRef.me.sitting && hasButton) {
       removeWhere((component) => component is ButtonComponent);
-    } else if (inArea && !showButton) {
-      showButton = true;
+    } else if (inArea && !hasButton && !gameRef.me.sitting) {
       add(startButton()..position = size / 2);
-    } else if (showButton && !inArea) {
-      showButton = false;
+    } else if (hasButton && !inArea) {
       removeWhere((component) => component is ButtonComponent);
     }
     super.update(dt);
   }
 }
 
-class EventComponent extends PositionComponent
-    with HasGameRef<RaogTverMeta>, CollisionCallbacks {
-  final EventType event;
-  final CustomProperties properties;
-
-  EventComponent({
-    required this.event,
-    required this.properties,
-    super.size,
+class GalleryEvent extends PositionComponent
+    with CollisionCallbacks, HasGameRef<RaogTverMeta>, Event {
+  GalleryEvent({
     super.position,
-  }) {
-    debugMode = false;
-  }
+    super.size,
+  });
 
   @override
-  Paint get debugPaint => Paint()
-    ..color = Colors.red.withOpacity(0.1)
-    ..style = PaintingStyle.fill;
-
-  late final ButtonComponent _requestingComponent;
-  late final TextBoxComponent _inProgressComponent;
-  late final TextBoxComponent _finishedComponent;
-
-  List<PositionComponent> get allComponents => [
-        _requestingComponent,
-        _inProgressComponent,
-        _finishedComponent,
-      ];
-
-  var _state = EventState.inactive;
-  EventState get state => _state;
-
-  set state(EventState newState) {
-    _state = newState;
-    switch (newState) {
-      case EventState.requesting:
-        if (!contains(_requestingComponent)) {
-          add(_requestingComponent);
-        }
-      case EventState.inactive:
-        for (final component in allComponents) {
-          if (children.contains(component)) {
-            remove(component);
-          }
-        }
-      default:
-        return;
-    }
-  }
+  bool get hasButton => children.whereType<ButtonComponent>().isNotEmpty;
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Player && event != EventType.light) {
-      state = EventState.requesting;
+    if (other is Player && !hasButton) {
+      add(startButton()..position = size / 2);
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is Player) {
-      state = EventState.inactive;
+    if (other is Player && hasButton) {
+      removeWhere((component) => component is ButtonComponent);
     }
     super.onCollisionEnd(other);
   }
 
   @override
-  FutureOr<void> onLoad() {
-    _requestingComponent = requestingComponent()
-      ..position = Vector2(size.x / 2, size.y / 2)
-      ..anchor = Anchor.center;
-    _inProgressComponent = TextBoxComponent();
-    _finishedComponent = TextBoxComponent();
+  FutureOr<void> onLoad() async {
     add(RectangleHitbox(isSolid: true));
     return super.onLoad();
   }
 
-  ButtonComponent requestingComponent() {
-    ButtonComponent wrapper({
-      required String text,
-      VoidCallback? onPressed,
-    }) {
-      return ButtonComponent(
-        onPressed: onPressed,
-        button: TextComponent(
-          text: text,
-          textRenderer: TextPaint(
-            style: TextStyle(
-              fontSize: 4,
-              fontWeight: FontWeight.w600,
-              background: Paint()
-                ..color = Colors.black38
-                ..style = PaintingStyle.fill,
-            ),
+  @override
+  PositionComponent startButton() {
+    return ButtonComponent(
+      onPressed: () {
+        gameRef.overlays.add('gallery');
+      },
+      button: TextComponent(
+        text: 'Смотреть',
+        textRenderer: TextPaint(
+          style: TextStyle(
+            fontSize: 5,
+            fontWeight: FontWeight.w600,
+            background: Paint()
+              ..color = Colors.black38
+              ..style = PaintingStyle.fill,
           ),
         ),
-      );
-    }
-
-    return switch (event) {
-      EventType.guy || EventType.girl => wrapper(text: 'Говорить'),
-      EventType.chair || EventType.couch => wrapper(text: 'Сесть'),
-      EventType.drink => wrapper(text: 'Попить воды'),
-      EventType.gallery => wrapper(
-          text: 'Смотреть',
-          onPressed: _onGalleryPressed,
-        ),
-      EventType.light => wrapper(text: 'Включить'),
-      EventType.tv => wrapper(text: 'Смотреть'),
-    };
-  }
-
-  void _onGalleryPressed() {
-    gameRef.overlays.add('gallery');
+      ),
+    );
   }
 }
