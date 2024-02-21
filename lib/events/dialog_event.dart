@@ -42,6 +42,7 @@ final class DialogEvent extends PositionComponent
     if (_completed) {
       return onStopped?.call();
     }
+    removeWhere((component) => component is ButtonComponent);
     if (table == 1 && index == 1) {
       _runTable1Index1(onComplete);
       return;
