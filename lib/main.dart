@@ -21,21 +21,7 @@ import 'package:raog_tver_meta/missions/missions_container.dart';
 import 'package:raog_tver_meta/screens/tv_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// 1. add photos ✅
-// 2. fix player sprite ✅
-// 3. add progress storing ✅
-// 4. add app icon
-// 5. deploy
-// 6. write a post
-
 late final SharedPreferences _prefs;
-
-Map<Missions, bool> _parseJson(Map<String, dynamic> json) => {
-      Missions.watchTV: json[Missions.watchTV.name] ?? false,
-      Missions.lookGallery: json[Missions.lookGallery.name] ?? false,
-      Missions.talkToEverybody: json[Missions.talkToEverybody.name] ?? false,
-      Missions.drinkWater: json[Missions.drinkWater.name] ?? false,
-    };
 
 Future<Map<Missions, bool>?> _init() async {
   final prefs = await SharedPreferences.getInstance();

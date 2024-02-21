@@ -479,8 +479,7 @@ final class DialogEvent extends PositionComponent
       ]);
     } else {
       _running = true;
-      const text =
-          'Меня зовут Дениз! Вообще-то я пастор церкви, если интересует духовный вопрос.. и не только.. я весь твой!';
+      const text = 'Меня зовут Пабло! Здесь такие удобные диваны!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
       await playTalking();
@@ -533,7 +532,7 @@ final class DialogEvent extends PositionComponent
     } else {
       _running = true;
       const text =
-          'Меня зовут Натали! Я жена пастора. Если тебе что-то нужно – просто скажи!';
+          'На самом деле я тоже хочу пройти все задания, чтобы получить приз!';
       const timePerChar = 0.05;
       const duration = text.length * timePerChar;
       await playTalking();

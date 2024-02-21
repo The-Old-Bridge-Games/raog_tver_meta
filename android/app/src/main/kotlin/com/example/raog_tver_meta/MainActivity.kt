@@ -1,4 +1,4 @@
-package com.example.raog_tver_meta
+package com.raog_tver_meta.mobapp
 
 import io.flutter.embedding.android.FlutterActivity
 

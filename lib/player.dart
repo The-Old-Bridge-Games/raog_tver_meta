@@ -323,6 +323,10 @@ class Player extends SpriteAnimationGroupComponent<MyStates>
             return;
           }
           position.add(Vector2(25, 0));
+        } else if (prevState == MyStates.sitRight) {
+          if (gameRef.me.activeCollisions.whereType<CouchEvent>().isNotEmpty) {
+            position.add(Vector2(-25, 0));
+          }
         }
       }
       position.add(delta);
