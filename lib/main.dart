@@ -143,7 +143,6 @@ class RaogTverMeta extends FlameGame with HasCollisionDetection {
 
   void proceedDialog(DialogEvent dialog) {
     if (_dialogProceeding) return;
-    _dialogProceeding = true;
     hideJoystick();
     dialog.run(onComplete: () {
       _dialogProceeding = false;
@@ -153,6 +152,7 @@ class RaogTverMeta extends FlameGame with HasCollisionDetection {
       _dialogProceeding = false;
       showJoystick();
     });
+    _dialogProceeding = true;
   }
 
   @override

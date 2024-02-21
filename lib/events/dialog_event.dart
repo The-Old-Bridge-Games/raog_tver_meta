@@ -39,7 +39,9 @@ final class DialogEvent extends PositionComponent
     void Function()? onComplete,
     void Function()? onStopped,
   }) {
-    if (_completed) return;
+    if (_completed) {
+      return onStopped?.call();
+    }
     if (table == 1 && index == 1) {
       _runTable1Index1(onComplete);
       return;
