@@ -24,16 +24,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
   final _pageController = PageController(viewportFraction: 0.7);
 
   final imagePaths = [
-    'assets/images/gallery/IMG_3701.heic',
-    'assets/images/gallery/IMG_3697.heic',
-    'assets/images/gallery/IMG_3698.heic',
-    'assets/images/gallery/IMG_3699.heic',
+    'assets/images/gallery/IMG_3701.jpg',
+    'assets/images/gallery/IMG_3697.jpg',
+    'assets/images/gallery/IMG_3698.jpg',
+    'assets/images/gallery/IMG_3699.jpg',
     'assets/images/gallery/gallery2.jpg',
-    'assets/images/gallery/IMG_2609.heic',
-    'assets/images/gallery/IMG_3042.heic',
-    'assets/images/gallery/IMG_3082.heic',
-    'assets/images/gallery/IMG_3084.heic',
-    'assets/images/gallery/IMG_6929.heic',
+    'assets/images/gallery/IMG_2609.jpg',
+    'assets/images/gallery/IMG_3042.jpg',
+    'assets/images/gallery/IMG_3082.jpg',
+    'assets/images/gallery/IMG_3084.jpg',
+    'assets/images/gallery/IMG_6929.jpg',
   ];
 
   @override

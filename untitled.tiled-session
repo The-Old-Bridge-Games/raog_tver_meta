@@ -5,9 +5,9 @@
     },
     "activeFile": "assets/tiles/map.tmx",
     "expandedProjectPaths": [
+        "assets/tiles",
         "assets",
-        ".",
-        "assets/tiles"
+        "."
     ],
     "fileStates": {
         "": {
@@ -17,11 +17,11 @@
             "scaleInDock": 1
         },
         "assets/tiles/map.tmx": {
-            "scale": 4.8431,
+            "scale": 3.1565,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 75.98439016332514,
-                "y": 63.905349879209595
+                "x": 200.06336131791542,
+                "y": 109.45667669887536
             }
         },
         "assets/tiles/map.tmx#Adam_16x16": {
